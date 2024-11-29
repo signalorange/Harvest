@@ -35,13 +35,3 @@ harvest-*.tar
 npm-debug.log
 /assets/node_modules/
 
-/_build
-/cover
-/deps
-/doc
-/.fetch
-erl_crash.dump
-*.ez
-*.beam
-/config/*.secret.exs
-.elixir_ls/

@@ -1,0 +1,14 @@
+<.header>
+  Miner <%= @miner.id %>
+  <:subtitle>This is a miner record from your database.</:subtitle>
+  <:actions>
+    <.link href={~p"/miners/#{@miner}/edit"}>
+      <.button>Edit miner</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+</.list>
+
+<.back navigate={~p"/miners"}>Back to miners</.back>

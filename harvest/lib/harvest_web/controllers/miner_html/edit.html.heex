@@ -1,0 +1,8 @@
+<.header>
+  Edit Miner <%= @miner.id %>
+  <:subtitle>Use this form to manage miner records in your database.</:subtitle>
+</.header>
+
+<.miner_form changeset={@changeset} action={~p"/miners/#{@miner}"} />
+
+<.back navigate={~p"/miners"}>Back to miners</.back>

@@ -1,0 +1,25 @@
+<.header>
+  Miners
+  <:actions>
+    <.simple_form for={%{}} action={~p"/miners/import"} method="post">
+    <:actions>
+        <.button>Import Miners</.button>
+    </:actions>
+    </.simple_form>
+  </:actions>
+</.header>
+
+<.table id="miners" rows={@miners} class="bg-zinc-100">
+  <:col :let={miner} label="IP"><%= miner.ip %></:col>
+  <:col :let={miner} label="Make"><%= miner.make %></:col>
+  <:col :let={miner} label="Model"><%= miner.model %></:col>
+  <:col :let={miner} label="Hashrate">
+    <%= miner.hashrate %> TH/s
+  </:col>
+  <:col :let={miner} label="Temperature">
+    <%= miner.temperature_avg %> °C
+  </:col>
+  <:col :let={miner} label="Mining">
+    <%= if miner.is_mining, do: "Active", else: "Inactive" %>
+  </:col>
+</.table>

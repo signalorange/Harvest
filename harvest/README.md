@@ -1,7 +1,5 @@
 # Harvest
 
-Harvest is a control center for your bitcoin mine
-
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
