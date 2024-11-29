@@ -10,7 +10,7 @@
 </.header>
 
 <.table id="miners" rows={@miners} class="bg-zinc-100">
-  <:col :let={miner} label="IP"><a href={@miner.ip}><%= miner.ip %></a></:col>
+  <:col :let={miner} label="IP"><a href={"http://" <> miner.ip}><%= miner.ip %></a></:col>
   <:col :let={miner} label="Make"><%= miner.make %></:col>
   <:col :let={miner} label="Model"><%= miner.model %></:col>
   <:col :let={miner} label="Firmware"><%= miner.firmware %></:col>

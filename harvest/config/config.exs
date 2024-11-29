@@ -33,8 +33,8 @@ config :harvest, Harvest.Mailer, adapter: Swoosh.Adapters.Local
 
 # API endpoint for miners
 config :harvest,
-  miners_api_url: "http://localhost:9000/miners?subnet=10.60.10.0%2F24"
-
+  miners_api_url: "http://mining-01:9000/miners?subnet=10.60.10.0%2F24"
+# Convert this to ENV
 # Finch pool configuration
 config :harvest, Harvest.Finch,
   pools: %{

@@ -21,6 +21,7 @@ defmodule HarvestWeb.Router do
 
     resources "/miners", MinerController
     post "/miners/import", MinerControllerImport, :import
+
   end
 
   # Other scopes may use custom stacks.

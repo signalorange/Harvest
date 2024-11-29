@@ -13,11 +13,51 @@ defmodule Harvest.Miners do
     Repo.get!(Miner, id)
   end
 
+  defp extract_pool_url(miner_data) do
+    # pools can have two sheme:
+        # "pools": [
+        #     {
+        #       "url": "stratum+tcp://mine.ocean.xyz:3334",
+        #       "user": "bc1pe0dmytgxvqfd2stz7pk2y4e0ml4a90uar8z0xamr7w8qmm5ustts7rfwky.Container",
+        #       "password": "x"
+        #     }
+        #   ],
+        # OR "pools": [
+        #     {
+        #       "url": {
+        #         "scheme": "stratum+tcp",
+        #         "host": "mine.ocean.xyz",
+        #         "port": 3334,
+        #         "pubkey": null
+        #       },
+        #       "accepted": 3039,
+        #       "rejected": 6,
+        #       "get_failures": 0,
+        #       "remote_failures": 0,
+        #       "active": true,
+        #       "alive": true,
+        #       "index": 0,
+        #       "user": "bc1pe0dmytgxvqfd2stz7pk2y4e0ml4a90uar8z0xamr7w8qmm5ustts7rfwky.Container",
+        #       "pool_rejected_percent": 0.19704433497536944,
+        #       "pool_stale_percent": 0
+        #     }
+        #   ]
+    case get_in(miner_data, ["pools", Access.at(0), "url"]) do
+      %{"host" => host} -> host  # For structured format
+      %{"url" => url} -> url  # For structured format
+      url when is_binary(url) -> # For string format
+        url
+        |> URI.parse()
+        |> Map.get(:host)
+      _ -> nil
+    end
+  end
+
   # Function to fetch miners from API
   def fetch_miners_from_api(api_url, opts \\ []) do
     # Configure Finch request
     headers = Keyword.get(opts, :headers, [])
-    timeout = Keyword.get(opts, :timeout, 10_000)
+    timeout = Keyword.get(opts, :timeout, 10_000_000)
 
     case Finch.build(:get, api_url, headers)
          |> Finch.request(Harvest.Finch, receive_timeout: timeout) do
@@ -61,7 +101,8 @@ defmodule Harvest.Miners do
         is_mining: miner_data["is_mining"],
         uptime: miner_data["uptime"],
 
-        primary_pool_url: get_in(miner_data, ["pools", Access.at(0), "url", "host"]),
+        primary_pool_url: extract_pool_url(miner_data),
+
         primary_pool_user: get_in(miner_data, ["pools", Access.at(0), "user"]),
         accepted_shares: get_in(miner_data, ["pools", Access.at(0), "accepted"]),
         rejected_shares: get_in(miner_data, ["pools", Access.at(0), "rejected"])
@@ -71,20 +112,21 @@ defmodule Harvest.Miners do
       }
     end)
 
-  # Try to insert, handling potential conflicts
-  results = Enum.map(importable_data, fn miner_data ->
-    Repo.insert(struct(Miner, miner_data))
-  end)
+    # Try to insert, handling potential conflicts
+    Repo.delete_all(Miner)
+    results = Enum.map(importable_data, fn miner_data ->
+        Repo.insert(struct(Miner, miner_data))
+    end)
 
-  # Count successful insertions
-  successful_count = Enum.count(results, fn
-    {:ok, _} -> true
-    _ -> false
-  end)
+    # Count successful insertions
+    successful_count = Enum.count(results, fn
+        {:ok, _} -> true
+        _ -> false
+    end)
 
-  {:ok, successful_count}
-  rescue
-    Ecto.ConstraintError -> {:error, "Duplicate IP or MAC address found"}
+    {:ok, successful_count}
+    rescue
+        Ecto.ConstraintError -> {:error, "Duplicate IP or MAC address found"}
   end
 
   # Fallback for non-list data

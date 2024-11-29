@@ -43,8 +43,8 @@ services:
       MIX_ENV: prod
       PHX_HOST: localhost
       PORT: 4000
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     restart: unless-stopped
     ports:
       - '4000:4000'
