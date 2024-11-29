@@ -1,6 +1,10 @@
 # Harvest
 
-Harvest is a control center for your bitcoin mine
+Harvest is a control center for your bitcoin mine.
+
+You need an instance of pyasic-api and set it up in config.exs.
+
+You can use the provided docker-compose.yml to run the app.
 
 To start your Phoenix server:
 

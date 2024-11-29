@@ -9,6 +9,44 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+  pyasic-api:
+    image: signalorange/pyasic-api:latest
+    ports:
+      - "9000:9000"
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      - NETWORK_PING_RETRIES=1
+      - NETWORK_PING_TIMEOUT=3
+      - NETWORK_SCAN_SEMAPHORE=
+      - FACTORY_GET_RETRIES=1 
+      - FACTORY_GET_TIMEOUT=3
+      - GET_DATA_RETRIES=1
+      - API_FUNCTION_TIMEOUT=5
+      - ANTMINER_MINING_MODE_AS_STR=false
+      - WHATSMINER_RPC_PASSWORD=admin
+      - INNOSILICON_WEB_PASSWORD=admin
+      - ANTMINER_WEB_PASSWORD=root
+      - BOSMINER_WEB_PASSWORD=root
+      - VNISH_WEB_PASSWORD=admin
+      - GOLDSHELL_WEB_PASSWORD=123456789
+      - AURADINE_WEB_PASSWORD=admin
+      - EPIC_WEB_PASSWORD=letmein
+      - HIVE_WEB_PASSWORD=admin
+      - ANTMINER_SSH_PASSWORD=miner
+      - BOSMINER_SSH_PASSWORD=root
+      - SOCKET_LINGER_TIME=1000
+  harvest:
+    container_name: harvest
+    build: ./harvest/
+    environment:
+      MIX_ENV: prod
+      PHX_HOST: localhost
+      PORT: 4000
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - '4000:4000'
 volumes:
   postgres_data:
